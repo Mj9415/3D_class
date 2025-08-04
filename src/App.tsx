@@ -1,6 +1,7 @@
 import "./App.css";
-import Home from "@components/Home";
+
 import { RecoilRoot } from "recoil";
+import Home from "./components/Home";
 
 export default function App() {
   return (
