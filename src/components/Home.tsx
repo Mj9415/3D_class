@@ -1,15 +1,15 @@
 import { Canvas } from "@react-three/fiber";
 import ShowRoom from "@components/three/ShowRoom";
 import ColorComp from "@components/ColorComp";
-import { Environment } from "@react-three/drei";
+// import { Environment } from "@react-three/drei";
 // import { OrbitControls } from "@react-three/drei";
 import ResponsiveAppBar from "@components/menuBar";
 // import RackTest from "./three/RackTest";
 // import Test from "./three/test";
 
 export default function Home() {
-  const angle = 90; //회전각도
-  const dis = 100; //거리
+  // const angle = 90; //회전각도
+  // const dis = 100; //거리
   return (
     <>
       <ResponsiveAppBar />

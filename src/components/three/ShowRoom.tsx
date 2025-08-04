@@ -12,34 +12,41 @@ import { useRecoilState } from "recoil";
 import Constants from "@src/Constants";
 
 export default function ShowRoom() {
-  const [selectedColorIdx, setSelectedColorIdx] =
-    useRecoilState(selectedColorState);
+  const [selectedColorIdx] = useRecoilState(selectedColorState);
 
   const [selectedMeshName, setSelectedMeshName] =
     useRecoilState(selectedMeshState);
 
-  const { raycaster, camera, scene } = useThree();
+  const { raycaster, scene } = useThree();
   const cameraControlsRef = useRef<CameraControls>(null!);
   const [isFitting, setIsFitting] = useState(false);
 
   const gltf = useLoader(GLTFLoader, "/models/custom.glb");
   // console.log("gltf:", gltf); //scene 속성을 보면 left랑 right가 있음
 
-  //key 이벤트
-  window.addEventListener("keydown", (e) => {
-    // console.log("e.key:", e.key);
+  useEffect(() => {
+    //key 이벤트
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // console.log("e.key:", e.key);
 
-    switch (e.key) {
-      case "a":
-        cameraControlsRef.current.setLookAt(-2, 2, 2, 0, 0, 0, true);
-        break;
-      case "b":
-        cameraControlsRef.current.setLookAt(0, 3, 0, 0, 0, 0, true);
-        break;
-      case "c":
-        break;
-    }
-  });
+      switch (e.key) {
+        case "a":
+          cameraControlsRef.current.setLookAt(-2, 2, 2, 0, 0, 0, true);
+          break;
+        case "b":
+          cameraControlsRef.current.setLookAt(0, 3, 0, 0, 0, 0, true);
+          break;
+        case "c":
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     // primitive에는 object={gltf.scene} 전체가 들어가 있기때문에 castShadow가 안먹힘 따라서 useEffect를 사용하여 mesh가 다 로드되면 안에 있는 mesh들의 castShadow를 true로 바꾸어야함 */
@@ -68,19 +75,19 @@ export default function ShowRoom() {
 
   // 맨처음 실행시
   useEffect(() => {
-    gltf.scene.traverse((item: any) => {
+    gltf.scene.traverse((item: THREE.Object3D) => {
       // console.log("item", item);
 
       //파일이 머티리얼을 공유하고 있어서 item Mesh의 머터리얼로 바꿔주는 작업을 해줘야한다.
       if (item.name === "Vamp_Left") {
-        const itemMat = item.material as THREE.MeshStandardMaterial; //속성보고 meterial 타입에 따라 재지정해줘야함
+        const itemMat = (item as THREE.Mesh).material as THREE.MeshStandardMaterial; //속성보고 meterial 타입에 따라 재지정해줘야함
         const cloneMat = itemMat.clone(); //복제
 
-        item.material = cloneMat;
+        (item as THREE.Mesh).material = cloneMat;
         setSelectedMeshName(item.name);
       }
     });
-  }, [gltf.scene]);
+  }, [gltf.scene, setSelectedMeshName]);
 
   useEffect(() => {
     // console.log(selectedColorIdx);
@@ -93,7 +100,7 @@ export default function ShowRoom() {
       const colors = Constants.COLOR_ARR[selectedColorIdx].color;
       mat.color = new THREE.Color(colors);
     }
-  }, [selectedColorIdx]);
+  }, [selectedColorIdx, scene, selectedMeshName]);
 
   // const angle = 0; //회전각도
   // const dis = 2.0; //거리
@@ -101,7 +108,6 @@ export default function ShowRoom() {
   //★원이나 곡선을 그릴때, sin , cos 함수를 이용하여 (x,z), (x,y)축 두군데에 넣게 되면 앵글을 계속 바꿔주면 원을 그리면서 어떤 포지션이 바뀐다 (이건 외우기)
   // sin, cos 가 합쳐지면서 정원을 그린다.
   useFrame(() => {
-    const rightShoes = gltf.scene.children[0];
     const leftShoes = gltf.scene.children[1];
 
     //왼쪽신발 각도 조절
@@ -190,7 +196,7 @@ export default function ShowRoom() {
         minDistance={0.5}
         // maxDistance={10}
         infinityDolly={false}
-        onChange={(e: any) => {
+        onChange={() => {
           // console.log(e.type);
           // console.log("onChange");
           // console.log("camera.position:", camera.position);
