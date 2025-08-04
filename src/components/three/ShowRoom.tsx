@@ -21,7 +21,7 @@ export default function ShowRoom() {
   const cameraControlsRef = useRef<CameraControls>(null!);
   const [isFitting, setIsFitting] = useState(false);
 
-  const gltf = useLoader(GLTFLoader, "/models/custom.glb");
+  const gltf = useLoader(GLTFLoader, "/3d_glb/3d_Custom.glb");
   // console.log("gltf:", gltf); //scene 속성을 보면 left랑 right가 있음
 
   useEffect(() => {
@@ -80,7 +80,8 @@ export default function ShowRoom() {
 
       //파일이 머티리얼을 공유하고 있어서 item Mesh의 머터리얼로 바꿔주는 작업을 해줘야한다.
       if (item.name === "Vamp_Left") {
-        const itemMat = (item as THREE.Mesh).material as THREE.MeshStandardMaterial; //속성보고 meterial 타입에 따라 재지정해줘야함
+        const itemMat = (item as THREE.Mesh)
+          .material as THREE.MeshStandardMaterial; //속성보고 meterial 타입에 따라 재지정해줘야함
         const cloneMat = itemMat.clone(); //복제
 
         (item as THREE.Mesh).material = cloneMat;
