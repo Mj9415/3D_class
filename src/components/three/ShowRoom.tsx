@@ -22,7 +22,7 @@ export default function ShowRoom() {
   const cameraControlsRef = useRef<CameraControls>(null!);
   const [isFitting, setIsFitting] = useState(false);
 
-  const gltf = useLoader(GLTFLoader, "./models/custom.glb");
+  const gltf = useLoader(GLTFLoader, "/models/custom.glb");
   // console.log("gltf:", gltf); //scene 속성을 보면 left랑 right가 있음
 
   //key 이벤트
