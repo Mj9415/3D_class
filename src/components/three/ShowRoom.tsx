@@ -4,8 +4,10 @@ import * as THREE from "three";
 
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+
 import { CameraControls, ContactShadows } from "@react-three/drei";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { selectedColorState, selectedMeshState } from "@src/atoms/Atoms";
 import { useRecoilState } from "recoil";
@@ -21,7 +23,19 @@ export default function ShowRoom() {
   const cameraControlsRef = useRef<CameraControls>(null!);
   const [isFitting, setIsFitting] = useState(false);
 
-  const gltf = useLoader(GLTFLoader, "/3d_glb/3d_Custom.glb");
+  const dracoLoader = useMemo(() => {
+    const loader = new DRACOLoader();
+    loader.setDecoderPath("/draco/");
+    return loader;
+  }, []);
+
+  //용량이 너무 커서 DRACOLoader 압축함
+  const gltf = useLoader(
+    GLTFLoader,
+    "https://pub-2315c303751e4581a6e749b365cd29b0.r2.dev/3d_Custom.glb",
+    (loader) => loader.setDRACOLoader(dracoLoader)
+  );
+
   // console.log("gltf:", gltf); //scene 속성을 보면 left랑 right가 있음
 
   useEffect(() => {

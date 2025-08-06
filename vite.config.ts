@@ -7,7 +7,7 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   base: "./",
-  assetsInclude: ["**/*.glb", "**/*.gltf", "**/*.bin"],
+  assetsInclude: ["**/*.glb", "**/*.gltf", "**/*.bin", "**/*.wasm"],
   resolve: {
     alias: {
       "@components": path.resolve(__dirname, "src/components"),
