@@ -9,7 +9,11 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { CameraControls, ContactShadows } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { selectedColorState, selectedMeshState } from "@src/atoms/Atoms";
+import {
+  selectedColorState,
+  selectedMeshState,
+  cameraResetState,
+} from "@src/atoms/Atoms";
 import { useRecoilState } from "recoil";
 import Constants from "@src/Constants";
 
@@ -18,6 +22,8 @@ export default function ShowRoom() {
 
   const [selectedMeshName, setSelectedMeshName] =
     useRecoilState(selectedMeshState);
+
+  const [cameraReset, setCameraReset] = useRecoilState(cameraResetState);
 
   const { raycaster, scene } = useThree();
   const cameraControlsRef = useRef<CameraControls>(null!);
@@ -116,6 +122,25 @@ export default function ShowRoom() {
       mat.color = new THREE.Color(colors);
     }
   }, [selectedColorIdx, scene, selectedMeshName]);
+
+  // 카메라 리셋 상태를 감지하여 전체 뷰로 돌아가기
+  useEffect(() => {
+    if (cameraReset) {
+      // 카메라를 기본 위치로 리셋
+      cameraControlsRef.current.setLookAt(
+        -1.8,
+        0.8,
+        1.5, // 카메라 위치
+        0,
+        0,
+        0, // 타겟 위치
+        true // 애니메이션 사용
+      );
+
+      // 리셋 상태를 false로 변경
+      setCameraReset(false);
+    }
+  }, [cameraReset, setCameraReset]);
 
   // const angle = 0; //회전각도
   // const dis = 2.0; //거리

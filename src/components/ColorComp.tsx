@@ -8,7 +8,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { selectedColorState, selectedMeshState } from "@src/atoms/Atoms";
+import {
+  selectedColorState,
+  selectedMeshState,
+  cameraResetState,
+} from "@src/atoms/Atoms";
 import { useRecoilState } from "recoil";
 
 export default function ColorComp() {
@@ -19,13 +23,18 @@ export default function ColorComp() {
   //클릭한 부분의 이름
   const [selectedMeshName] = useRecoilState(selectedMeshState);
 
+  // 카메라 리셋 상태
+  const [, setCameraReset] = useRecoilState(cameraResetState);
+
   // const [selected, setSelected] = useState(0);
   const padding = 16;
   const btnWidth = 30;
   const width = Constants.COLOR_ARR.length * (btnWidth + padding * 2);
 
-  const colorClick = (color: any, idx: number) => {
+  const colorClick = (color: (typeof Constants.COLOR_ARR)[0], idx: number) => {
     setSelectedColorIdx(idx);
+    // 색상 팔레트 클릭 시 카메라를 전체 뷰로 리셋
+    setCameraReset(true);
   };
 
   return (

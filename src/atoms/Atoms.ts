@@ -10,3 +10,8 @@ export const selectedMeshState = atom({
   key: "mesh",
   default: "",
 });
+
+export const cameraResetState = atom({
+  key: "cameraReset",
+  default: false,
+});
