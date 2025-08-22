@@ -8,6 +8,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 
 import { CameraControls, ContactShadows } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense } from "react";
 
 import {
   selectedColorState,
@@ -16,8 +17,34 @@ import {
 } from "@src/atoms/Atoms";
 import { useRecoilState } from "recoil";
 import Constants from "@src/Constants";
+import AdvancedLoadingSpinner from "@src/components/AdvancedLoadingSpinner";
 
 export default function ShowRoom() {
+  return (
+    <>
+      <directionalLight position={[3, 3, 3]} />
+      <pointLight castShadow position={[0, 1, 0]} intensity={3} />
+
+      <Suspense
+        fallback={<AdvancedLoadingSpinner message="신발 모델 로딩 중..." />}
+      >
+        <ShoesModel />
+      </Suspense>
+
+      {/* 독립적인 쉐도우 */}
+      <ContactShadows
+        position={[0, 0, 0]}
+        scale={5}
+        color="#000000"
+        resolution={512}
+        opacity={0.8}
+        blur={0.5}
+      />
+    </>
+  );
+}
+
+function ShoesModel() {
   const [selectedColorIdx] = useRecoilState(selectedColorState);
 
   const [selectedMeshName, setSelectedMeshName] =
@@ -222,8 +249,6 @@ export default function ShowRoom() {
 
   return (
     <>
-      <directionalLight position={[3, 3, 3]} />
-      <pointLight castShadow position={[0, 1, 0]} intensity={3} />
       {/* //enabled={true}로 하면 OrbitControls 사용가능, 상황: 변수에따라 컨트롤 유,무를 따질때 사용*/}
       {/* dollyToCursor: 3D카메라, 퍼스펙티브 카메라에서만 작동하며, 마우스위치에 있는곳을 중심으로 줌, 아웃이 된다. 모바일에서도 사용가능(집게손) */}
       {/* minDistance: 가까워지는 줌 거리 제한 두는 것 */}
@@ -253,7 +278,7 @@ export default function ShowRoom() {
         <cylinderGeometry args={[0.4, 0.2, 0.2, 100]} />
         <meshStandardMaterial />
       </mesh>
-      ``
+
       {/* 모델링 */}
       <primitive object={gltf.scene} onClick={shoesClick} />
       {/* <mesh
@@ -266,16 +291,6 @@ export default function ShowRoom() {
         <boxGeometry />
         <meshStandardMaterial />
       </mesh> */}
-      {/* 독립적인 쉐도우 */}
-      {/* 독자적으로 만드는 그림자이기 때문에 캔버스 매쉬등 castShadow은 사용안해도 된다. 단 바닥에 있는 그림자만 만들 수있다(이외에는 THREE 쉐도우를 사용해야함) */}
-      <ContactShadows
-        position={[0, 0, 0]}
-        scale={5}
-        color="#000000"
-        resolution={512}
-        opacity={0.8}
-        blur={0.5}
-      />
     </>
   );
 }
